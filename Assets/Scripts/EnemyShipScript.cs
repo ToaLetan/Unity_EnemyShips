@@ -3,7 +3,11 @@ using System.Collections;
 
 public class EnemyShipScript : MonoBehaviour 
 {
+	public enum AI_State { Idle, Aggressive, Defensive, Evasive, Supportive };
+
 	public float MAX_ACTION_TIME = 1.0f;
+
+	private AI_State currentAIState = AI_State.Aggressive;
 
 	private GameObject[] potentialTargets;
 	private GameObject currentTarget = null;
@@ -23,8 +27,7 @@ public class EnemyShipScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (isActionTimerRunning)
-			UpdateActionTimer ();
+		ProcessState ();
 	}
 
 	private void UpdateActionTimer()
@@ -44,4 +47,68 @@ public class EnemyShipScript : MonoBehaviour
 
 		projectile.GetComponent<ProjectileScript> ().PushTowardsLocation (currentTarget.transform.position, 5.0f);
 	}
+
+	#region AI State Functions
+	private void ProcessState()
+	{
+		switch (currentAIState) 
+		{
+			case AI_State.Idle:
+				IdleAction();
+			break;
+			case AI_State.Aggressive:
+				AggressiveAction();
+			break;
+			case AI_State.Defensive:
+				DefensiveAction();
+			break;
+			case AI_State.Evasive:
+				EvasiveAction();
+			break;
+			case AI_State.Supportive:
+				SupportiveAction();
+			break;
+			default:
+				IdleAction();
+			break;
+		}
+	}
+
+	private void IdleAction()
+	{
+
+	}
+
+	private void AggressiveAction()
+	{
+		//Circle around player and shoot at them
+		if (isActionTimerRunning)
+			UpdateActionTimer ();
+
+		float angleToTarget = Mathf.Atan2(currentTarget.transform.position.y - gameObject.transform.position.y, currentTarget.transform.position.x - gameObject.transform.position.x) 
+			* Mathf.Rad2Deg + 90;
+
+		gameObject.transform.rotation = Quaternion.Euler (0, 0, angleToTarget);
+
+		Vector3 newPos = gameObject.transform.position + (gameObject.transform.right * 1.0f * Time.deltaTime);
+
+		gameObject.transform.position = newPos;
+	}
+
+	private void DefensiveAction()
+	{
+		
+	}
+
+	private void EvasiveAction()
+	{
+		
+	}
+
+	private void SupportiveAction()
+	{
+		
+	}
+
+	#endregion
 }

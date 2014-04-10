@@ -35,9 +35,7 @@ public class ProjectileScript : MonoBehaviour
 
 		float rotation = Mathf.Atan2 (targetPos.y - gameObject.transform.position.y, targetPos.x - gameObject.transform.position.x) * Mathf.Rad2Deg;
 
-		//Debug.Log (rotation);
-
-		gameObject.transform.Rotate (0, 0, rotation + 90);
+		gameObject.transform.Rotate (0, 0, rotation + 90); //90 has to be added due to 2D orientation.
 	}
 
 	private void UpdateTimer()
