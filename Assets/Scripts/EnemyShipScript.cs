@@ -15,6 +15,8 @@ public class EnemyShipScript : MonoBehaviour
 	private float actionTime = 0;
 	private bool isActionTimerRunning = false;
 
+	private EnemyMovementLibrary.Direction currentMoveDirection;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -22,6 +24,11 @@ public class EnemyShipScript : MonoBehaviour
 		currentTarget = potentialTargets[Random.Range (0, potentialTargets.Length)];
 
 		isActionTimerRunning = true;
+
+		if (Random.value > 0.5f)
+			currentMoveDirection = EnemyMovementLibrary.Direction.Left;
+		else
+			currentMoveDirection = EnemyMovementLibrary.Direction.Right;
 	}
 	
 	// Update is called once per frame
@@ -81,18 +88,14 @@ public class EnemyShipScript : MonoBehaviour
 
 	private void AggressiveAction()
 	{
-		//Circle around player and shoot at them
+		//Move towards the player, circle around them when in range while constantly shooting.
 		if (isActionTimerRunning)
 			UpdateActionTimer ();
 
-		float angleToTarget = Mathf.Atan2(currentTarget.transform.position.y - gameObject.transform.position.y, currentTarget.transform.position.x - gameObject.transform.position.x) 
-			* Mathf.Rad2Deg + 90;
-
-		gameObject.transform.rotation = Quaternion.Euler (0, 0, angleToTarget);
-
-		Vector3 newPos = gameObject.transform.position + (gameObject.transform.right * 1.0f * Time.deltaTime);
-
-		gameObject.transform.position = newPos;
+		if(EnemyMovementLibrary.DistanceBetweenPoints(gameObject.transform.position, currentTarget.transform.position) >= 0.5f)
+			gameObject.transform.position = EnemyMovementLibrary.MoveToTarget (gameObject, currentTarget);
+		else
+			gameObject.transform.position = EnemyMovementLibrary.CircleAroundTarget(gameObject, currentTarget, currentMoveDirection);
 	}
 
 	private void DefensiveAction()
@@ -109,6 +112,5 @@ public class EnemyShipScript : MonoBehaviour
 	{
 		
 	}
-
 	#endregion
 }
